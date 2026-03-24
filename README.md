@@ -79,3 +79,4 @@ docker run -d -p 27017:27017 --name mongodb mongo
 3. **Pomodoro Timer**: A 25-minute focus timer and a 5-minute break timer with visual indicators, persisted across sessions via local storage.
 4. **API Integration**: Frontend tightly bound via Axios to the Spring Boot backend REST endpoints using proper CORS configuration.
 5. **Modern UI**: Polished, minimalistic dark-theme user interface built securely with Tailwind CSS and ShadCN components.
+# student-productivity-manager
