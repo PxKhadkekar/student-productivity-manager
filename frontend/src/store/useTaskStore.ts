@@ -14,6 +14,7 @@ export interface Task {
   status?: string;
   startDate?: string;
   allDay?: boolean;
+  subtasks?: { title: string; completed: boolean }[];
 }
 
 export interface TaskStats {

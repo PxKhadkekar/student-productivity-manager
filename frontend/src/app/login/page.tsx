@@ -74,11 +74,17 @@ export default function LoginPage() {
             <Button type="submit" className="w-full" disabled={loading}>
               {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : "Login"}
             </Button>
-            <div className="text-center text-sm text-muted-foreground mt-4">
-              Don't have an account?{" "}
-              <Link href="/signup" className="underline hover:text-primary">
-                Sign up
+            
+            <div className="flex flex-col space-y-2 text-center text-sm text-muted-foreground mt-4">
+              <Link href="/forgot-password" onClick={(e) => { e.preventDefault(); router.push('/forgot-password'); }} className="underline hover:text-primary">
+                Forgot your password?
               </Link>
+              <div>
+                Don't have an account?{" "}
+                <Link href="/signup" className="underline hover:text-primary">
+                  Sign up
+                </Link>
+              </div>
             </div>
           </form>
         </CardContent>

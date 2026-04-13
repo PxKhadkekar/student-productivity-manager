@@ -10,16 +10,18 @@ export default function AuthGuard({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const [mounted, setMounted] = useState(false);
 
+  const PUBLIC_ROUTES = ['/login', '/signup', '/forgot-password', '/reset-password'];
+
   useEffect(() => {
     setMounted(true);
-    if (!token && pathname !== '/login' && pathname !== '/signup') {
+    if (!token && !PUBLIC_ROUTES.includes(pathname)) {
       router.push('/login');
     }
   }, [token, pathname, router]);
 
   if (!mounted) return null;
 
-  const isAuthPage = pathname === '/login' || pathname === '/signup';
+  const isAuthPage = PUBLIC_ROUTES.includes(pathname);
 
   if (!token && !isAuthPage) {
     return null; // Prevents flashing of protected pages

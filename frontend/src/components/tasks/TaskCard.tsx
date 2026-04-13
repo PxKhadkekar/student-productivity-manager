@@ -1,10 +1,10 @@
-import { Task } from '@/store/useTaskStore';
+import { useTaskStore, Task } from '@/store/useTaskStore';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { format } from 'date-fns';
-import { Edit, Trash2, Clock } from 'lucide-react';
+import { Edit, Trash2, Clock, CheckSquare } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 interface TaskCardProps {
@@ -21,6 +21,15 @@ const priorityColors = {
 };
 
 export default function TaskCard({ task, onEdit, onDelete, onToggleComplete }: TaskCardProps) {
+  const updateTask = useTaskStore(state => state.updateTask);
+
+  const handleSubtaskToggle = (index: number, completed: boolean) => {
+    if (!task.subtasks) return;
+    const newSubtasks = [...task.subtasks];
+    newSubtasks[index].completed = completed;
+    updateTask(task.id, { subtasks: newSubtasks });
+  };
+
   return (
     <motion.div
       layout
@@ -39,11 +48,37 @@ export default function TaskCard({ task, onEdit, onDelete, onToggleComplete }: T
             onCheckedChange={(checked) => onToggleComplete(task.id, checked as boolean)}
             className="mt-1"
           />
-          <div className="space-y-1">
+          <div className="space-y-1 flex-1">
             <CardTitle className={`text-lg ${task.completed ? 'line-through text-muted-foreground' : ''}`}>
               {task.title}
             </CardTitle>
-            <p className="text-sm text-muted-foreground line-clamp-2">{task.description}</p>
+            {task.description && (
+              <div 
+                className="text-sm text-muted-foreground prose prose-sm max-w-none prose-p:leading-snug mt-1"
+                dangerouslySetInnerHTML={{ __html: task.description }}
+              />
+            )}
+            
+            {task.subtasks && task.subtasks.length > 0 && (
+              <div className="mt-4 pt-2 border-t border-muted/50 space-y-2">
+                <div className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-2">
+                  <CheckSquare className="w-3.5 h-3.5" />
+                  Checklist ({task.subtasks.filter(s => s.completed).length}/{task.subtasks.length})
+                </div>
+                {task.subtasks.map((subtask, index) => (
+                  <div key={index} className="flex items-center gap-2 group/subtask">
+                    <Checkbox
+                      checked={subtask.completed}
+                      onCheckedChange={(checked) => handleSubtaskToggle(index, checked as boolean)}
+                      className="h-4 w-4 data-[state=checked]:bg-muted-foreground data-[state=checked]:border-muted-foreground"
+                    />
+                    <span className={`text-sm flex-1 truncate transition-colors ${subtask.completed ? 'line-through text-muted-foreground/60' : 'text-card-foreground group-hover/subtask:text-primary'}`}>
+                      {subtask.title}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         </div>
       </CardHeader>

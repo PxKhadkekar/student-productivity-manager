@@ -13,6 +13,7 @@ export const metadata: Metadata = {
 
 import AuthGuard from "@/components/auth/AuthGuard";
 import { ThemeProvider } from "@/components/providers/ThemeProvider";
+import BottomNav from "@/components/layout/BottomNav";
 
 export default function RootLayout({
   children,
@@ -25,12 +26,13 @@ export default function RootLayout({
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
           <AuthGuard>
             <Navbar />
-            <div className="flex flex-1 overflow-hidden">
+            <div className="flex flex-1 overflow-hidden relative">
               <Sidebar />
-              <main className="flex-1 overflow-y-auto p-6 bg-muted/20 pb-20 sm:pb-6">
+              <main className="flex-1 overflow-y-auto p-4 md:p-6 bg-muted/20 pb-20 md:pb-6 relative w-full">
                 {children}
               </main>
             </div>
+            <BottomNav />
           </AuthGuard>
         </ThemeProvider>
       </body>

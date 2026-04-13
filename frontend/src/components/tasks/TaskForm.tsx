@@ -1,8 +1,9 @@
 import { Task } from '@/store/useTaskStore';
 import { zodResolver } from "@hookform/resolvers/zod"
-import { useForm } from "react-hook-form"
+import { useForm, useFieldArray } from "react-hook-form"
 import * as z from "zod"
 import { Button } from "@/components/ui/button"
+import { Plus, Trash2 } from "lucide-react"
 import {
   Form,
   FormControl,
@@ -12,7 +13,7 @@ import {
   FormMessage,
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
-import { Textarea } from "@/components/ui/textarea"
+import RichTextEditor from './RichTextEditor'
 import {
   Select,
   SelectContent,
@@ -32,6 +33,10 @@ const formSchema = z.object({
   allDay: z.boolean().optional(),
   category: z.string(),
   tags: z.string().optional(),
+  subtasks: z.array(z.object({
+    title: z.string().min(1, "Cannot be empty"),
+    completed: z.boolean()
+  })).optional().default([]),
 })
 
 interface TaskFormProps {
@@ -52,7 +57,13 @@ export default function TaskForm({ initialData, onSubmit, onCancel }: TaskFormPr
       allDay: false,
       category: "Uncategorized",
       tags: "",
+      subtasks: [],
     },
+  })
+
+  const { fields, append, remove } = useFieldArray({
+    name: "subtasks",
+    control: form.control,
   })
 
   useEffect(() => {
@@ -66,6 +77,7 @@ export default function TaskForm({ initialData, onSubmit, onCancel }: TaskFormPr
         allDay: initialData.allDay || false,
         category: initialData.category || "Uncategorized",
         tags: initialData.tags ? initialData.tags.join(', ') : "",
+        subtasks: initialData.subtasks || [],
       });
     }
   }, [initialData, form]);
@@ -144,9 +156,9 @@ export default function TaskForm({ initialData, onSubmit, onCancel }: TaskFormPr
           name="description"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Description</FormLabel>
+              <FormLabel>Notes</FormLabel>
               <FormControl>
-                <Textarea placeholder="Task details..." {...field} />
+                <RichTextEditor content={field.value || ""} onChange={field.onChange} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -194,34 +206,54 @@ export default function TaskForm({ initialData, onSubmit, onCancel }: TaskFormPr
             )}
           />
         </div>
-        <div className="grid grid-cols-2 gap-4">
-          <FormField
-            control={form.control}
-            name="startDate"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Start Date</FormLabel>
-                <FormControl>
-                  <Input type="date" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="dueDate"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Due Date</FormLabel>
-                <FormControl>
-                  <Input type="date" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+
+        <div className="space-y-3 pt-2">
+          <div className="flex items-center justify-between">
+            <label className="text-sm font-medium leading-none">Subtasks</label>
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              className="h-8 gap-1"
+              onClick={() => append({ title: "", completed: false })}
+            >
+              <Plus className="h-3 w-3" />
+              Add Subtask
+            </Button>
+          </div>
+          
+          {fields.map((field, index) => (
+            <div key={field.id} className="flex items-start gap-2">
+              <FormField
+                control={form.control}
+                name={`subtasks.${index}.title`}
+                render={({ field: subField }) => (
+                  <FormItem className="flex-1 w-full space-y-0 relative">
+                    <FormControl>
+                      <Input
+                        placeholder={`Subtask ${index + 1}`}
+                        className="pr-10"
+                        {...subField}
+                      />
+                    </FormControl>
+                    <FormMessage className="absolute -bottom-5" />
+                  </FormItem>
+                )}
+              />
+              <Button
+                type="button"
+                variant="ghost"
+                size="icon"
+                className="h-10 w-10 text-destructive hover:bg-destructive/10"
+                onClick={() => remove(index)}
+              >
+                <Trash2 className="h-4 w-4" />
+              </Button>
+            </div>
+          ))}
+          {fields.length > 0 && <div className="h-4" />}
         </div>
+
         <div className="flex justify-end gap-2 pt-4">
           <Button type="button" variant="outline" onClick={onCancel}>Cancel</Button>
           <Button type="submit">Save Task</Button>

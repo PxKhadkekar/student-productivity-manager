@@ -18,6 +18,7 @@ public class Task {
     private long timeSpent; // Total time spent in seconds
     private String category;
     private java.util.List<String> tags;
+    private java.util.List<SubTask> subtasks;
     private String status = "TODO"; // TODO, IN_PROGRESS, DONE
     private Date startDate;
     private Boolean allDay = false;
@@ -33,6 +34,7 @@ public class Task {
         this.timeSpent = 0;
         this.category = "Uncategorized";
         this.tags = new java.util.ArrayList<>();
+        this.subtasks = new java.util.ArrayList<>();
     }
 
     public String getId() { return id; }
@@ -73,4 +75,7 @@ public class Task {
 
     public Boolean getAllDay() { return allDay != null && allDay; }
     public void setAllDay(Boolean allDay) { this.allDay = allDay; }
+
+    public java.util.List<SubTask> getSubtasks() { return subtasks; }
+    public void setSubtasks(java.util.List<SubTask> subtasks) { this.subtasks = subtasks; }
 }

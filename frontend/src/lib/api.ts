@@ -49,6 +49,8 @@ export const TaskService = {
 export const AuthService = {
   login: (credentials: any) => api.post('/auth/login', credentials),
   signup: (user: any) => api.post('/auth/signup', user),
+  forgotPassword: (email: string) => api.post('/auth/forgot-password', { email }),
+  resetPassword: (token: string, newPassword: string) => api.post('/auth/reset-password', { token, newPassword }),
 };
 
 export default api;
