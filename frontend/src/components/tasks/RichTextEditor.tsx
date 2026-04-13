@@ -31,7 +31,7 @@ export default function RichTextEditor({ content, onChange }: RichTextEditorProp
   useEffect(() => {
     if (editor && editor.getHTML() !== content) {
       const currentPos = editor.state.selection;
-      editor.commands.setContent(content, false);
+      editor.commands.setContent(content, { emitUpdate: false });
       editor.commands.setTextSelection(currentPos);
     }
   }, [content, editor]);
