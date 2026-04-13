@@ -36,7 +36,7 @@ const formSchema = z.object({
   subtasks: z.array(z.object({
     title: z.string().min(1, "Cannot be empty"),
     completed: z.boolean()
-  })).optional().default([]),
+  })).default([]),
 })
 
 interface TaskFormProps {
