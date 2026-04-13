@@ -2,7 +2,7 @@ import axios from 'axios';
 import { useAuthStore } from '@/store/useAuthStore';
 
 const api = axios.create({
-  baseURL: 'http://localhost:8080/api', // Spring Boot default port
+  baseURL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api', // Uses Vercel Env Var first, defaults to localhost
   headers: {
     'Content-Type': 'application/json',
   },
